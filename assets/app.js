@@ -149,15 +149,24 @@
       '<div class="q1">믿음은</div><h1>' + esc(d.heading) + '</h1>' +
       '<div class="verse"><p>' + esc(d.verse_text) + '</p><div class="ref">' + esc(d.verse_ref) + ' · 개역개정</div></div>' +
       '<div class="sec-lab">말씀을 묵상하다</div><div class="body">' + body + '</div>' +
-      '<div class="listen"><button class="btn line" data-yt="' + esc(d.vid) + '" data-t="' + d.t + '">▶ 목사님 목소리로 듣기</button></div><div class="yt" id="yt"></div>' +
+      '<div class="listen"><button class="btn line" data-yt="' + esc(d.vid) + '" data-t="' + d.t + '">▶ 목사님 목소리로 듣기</button><a class="btn line" href="#/audio/' + (d.journey + 1) + '">♪ ' + esc(jj.no) + ' 오디오</a></div><div class="yt" id="yt"></div>' +
       '<div class="sec-lab">오늘 나에게 주시는 질문</div><div class="qcard"><p>' + esc(d.question) + '</p>' + (d.question_by === '목사님' ? '<small>박대성 목사</small>' : '') + '</div>' +
       '<div class="sec-lab">오늘의 작은 실천</div><label class="practice"><input type="checkbox" data-practice="' + n + '"' + (chk ? ' checked' : '') + '><p>' + esc(d.practice) + '</p></label>' +
+      '<div class="sec-lab">한 문장 필사</div><div class="pilsa"><div class="guide">믿음은 ' + esc(d.heading) + '</div><canvas data-pilsa="' + n + '"></canvas></div><div class="ptools"><span>손가락이나 펜으로 천천히 따라 써 보십시오</span><span><button class="btn line" data-pclear="' + n + '">지우기</button> <button class="btn ink" data-psave="' + n + '">필사 저장</button></span></div>' +
       '<div class="sec-lab">나의 묵상</div><div class="journal"><textarea data-journal="' + n + '" placeholder="마음에 남은 한 문장, 오늘의 묵상, 감사한 것을 적어 보십시오.">' + esc(j) + '</textarea><div class="st"><span id="jst">' + (j ? '이 기기에 저장되어 있습니다' : '쓰는 대로 이 기기에 저장됩니다') + '</span><a href="#/me">나의 기록 모아 보기 →</a></div></div>' +
       (d.prayer ? '<div class="sec-lab">' + (d.prayer_kind === '축원' ? '목사님의 축원' : d.prayer_kind === '고백' ? '오늘의 고백' : '오늘의 기도') + '</div><div class="prayer">' + esc(d.prayer) + '</div>' : '') +
       '<div class="sec-lab">오늘의 고백 나누기</div><div class="share"><form class="row" data-confess="' + n + '"><span>믿음은</span><input name="text" maxlength="60" placeholder="나의 한 문장" required><span>이다</span><input name="name" maxlength="20" placeholder="이름·별칭" style="flex:0 0 110px;min-width:90px;font-family:var(--sans);font-size:15px"><input type="text" name="hp" tabindex="-1" autocomplete="off" style="display:none"><button class="btn" type="submit">나누기</button></form></div>' +
       '<div style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn ink" data-done="' + n + '">' + (done()[n] ? '✓ 오늘의 묵상을 마쳤습니다' : '오늘의 묵상 마치기') + '</button>' + (n < 40 ? '<a class="btn line" href="#/day/' + (n + 1) + '">DAY ' + String(n + 1).padStart(2, '0') + ' 미리 보기</a>' : '<a class="btn line" href="#/me">나의 믿음은 ___이다 쓰기</a>') + '</div>' +
       '<div class="src">말씀 출처 · ' + esc(d.src) + '<br>본문은 목사님 설교와 아침 묵상의 육성을 글로 옮긴 것입니다.' + (d.practice_by === '엮은이' ? ' 작은 실천은 목사님 말씀을 바탕으로 제안한 것입니다.' : '') + '</div>' +
       '</div></div></div>' + footerHTML();
+  };
+
+  V.audio = function (k) {
+    k = Math.max(1, Math.min(J.length, k | 0)); var x = J[k - 1]; var ds = DAYS.filter(function (d) { return d.journey === k - 1; });
+    return '<div class="dayv"><div class="dhead"><div class="bg" style="background-image:url(' + x.photo + ')"></div><div class="in wrap"><div class="eyebrow" style="color:#f3e3c2">' + esc(x.no) + ' · 여정 오디오</div><div class="serif" style="font-size:clamp(22px,2.6vw,32px);margin-top:8px;font-weight:700">' + esc(x.title) + '</div></div></div>' +
+      '<div class="wrap"><div class="article"><div class="qcard" style="margin-top:28px"><p>이 여정의 오디오를 준비하고 있습니다.</p><small>목사님의 육성으로 듣는 여정 묵상이 이 자리에 열립니다. 그동안은 날마다의 묵상에서 ‘목사님 목소리로 듣기’를 눌러 설교의 그 대목을 들으실 수 있습니다.</small></div>' +
+      '<div class="sec-lab">이 여정의 날들</div><div class="jrow"><ol>' + ds.map(function (d) { return '<li><a href="#/day/' + d.day + '"><span class="d">DAY ' + String(d.day).padStart(2, '0') + '</span><span class="h"><em>믿음은</em> ' + esc(d.heading) + '</span></a></li>'; }).join('') + '</ol></div>' +
+      '<div class="cta" style="margin-top:24px">' + J.map(function (y, i) { return '<a class="btn ' + (i === k - 1 ? 'ink' : 'line') + '" href="#/audio/' + (i + 1) + '">' + esc(y.no) + '</a>'; }).join('') + '</div></div></div></div>' + footerHTML();
   };
 
   V.journey = function () {
@@ -194,7 +203,7 @@
       '<div><p class="serif" style="font-size:19px">' + (startDate() ? startDate() + '에 시작했습니다.' : '아직 시작하지 않았습니다.') + '</p><div class="cta" style="margin-top:14px"><button class="btn ink" data-start>' + (startDate() ? '오늘을 DAY 01로 다시 시작' : '오늘 시작하기') + '</button><button class="btn line" data-export>기록 내려받기</button><button class="btn line" onclick="window.print()">인쇄</button></div>' +
       '<p class="note" style="color:var(--mute)">기록은 이 기기의 브라우저 안에만 저장됩니다. 기기를 바꾸기 전에 ‘기록 내려받기’로 보관해 주세요.</p></div></div>' +
       '<div class="final"><div class="eyebrow" style="color:var(--gold2)">마지막 문장은 당신의 차례입니다</div><div class="big" style="margin-top:14px">나의 믿음은<br><input id="mine" maxlength="60" value="' + esc(LS.get('mine', '')) + '" placeholder="          "><br>이다</div><div class="cta" style="justify-content:center"><button class="btn primary" data-mine>저장하고 고백의 벽에 나누기</button></div></div>' +
-      '<div class="eyebrow" style="margin-top:48px">나의 묵상</div><div class="entries">' + (list || '<div class="empty">아직 기록이 없습니다. 오늘의 묵상에서 ‘나의 묵상’을 적으면 여기에 모입니다.</div>') + '</div></div></div>' + footerHTML();
+      (function(){ var ps = LS.get('pilsa', {}); var ks = Object.keys(ps).sort(function(x,y){return x-y;}); return ks.length ? '<div class="eyebrow" style="margin-top:48px">나의 필사</div><div class="pgal">' + ks.map(function (k) { return '<a href="#/day/' + k + '"><img src="' + ps[k] + '" alt="DAY ' + k + ' 필사"><span>DAY ' + String(k).padStart(2,'0') + '</span></a>'; }).join('') + '</div>' : ''; })() + '<div class="eyebrow" style="margin-top:48px">나의 묵상</div><div class="entries">' + (list || '<div class="empty">아직 기록이 없습니다. 오늘의 묵상에서 ‘나의 묵상’을 적으면 여기에 모입니다.</div>') + '</div></div></div>' + footerHTML();
   };
 
   V.about = function () {
@@ -202,6 +211,7 @@
     return '<div class="about-hero"><div class="bg" style="background-image:url(' + CFG.aboutPhoto + ')"></div><div class="in wrap"><div class="eyebrow" style="color:#f3e3c2">말씀을 전하는 사람</div><h1 class="h2" style="margin-top:14px;color:#fff">박대성 목사</h1><p class="lead" style="color:#e9e1d1">' + esc(A.lead || '') + '</p></div></div>' +
       '<section class="blk"><div class="wrap two"><div><div class="eyebrow">기억하는 믿음</div><p class="quote" style="margin-top:16px">' + esc(A.quote || '') + '</p><p class="note" style="color:var(--mute);margin-top:10px">' + esc(A.quoteSrc || '') + '</p></div>' +
       '<div class="tl">' + (A.timeline || []).map(function (t) { return '<div class="it"><div class="y">' + esc(t.y) + '</div><h4>' + esc(t.h) + '</h4><p>' + esc(t.p) + '</p>' + (t.s ? '<div class="s">' + esc(t.s) + '</div>' : '') + '</div>'; }).join('') + '</div></div></section>' +
+      '<section class="blk" style="padding-top:0"><div class="wrap"><p class="note" style="color:var(--sub);font-size:14px;line-height:1.9;max-width:760px">' + esc(A.photographer || '') + '</p></div></section>' +
       '<section class="blk dark"><div class="wrap two"><div><div class="eyebrow">베다니 한인연합감리교회</div><h2 class="h2" style="margin-top:14px;color:#fff">' + esc(A.churchTitle || '') + '</h2><p class="lead">' + esc(A.church || '') + '</p></div><div><p class="lead" style="margin-top:0">' + esc(A.morning || '') + '</p><div class="cta"><a class="btn primary" href="https://www.youtube.com/@bethanykumc" target="_blank" rel="noopener">베다니 유튜브</a><a class="btn ghost" href="https://bethanykumc.org" target="_blank" rel="noopener">교회 홈페이지</a></div></div></div></section>' + footerHTML();
   };
 
@@ -210,12 +220,13 @@
     var h = location.hash.replace(/^#\/?/, ''), parts = h.split('/');
     var view = parts[0] || 'home', html;
     if (view === 'day') html = V.day(parseInt(parts[1], 10) || myDay());
+    else if (view === 'audio') html = V.audio(parseInt(parts[1], 10) || 1);
     else if (V[view]) html = V[view](); else html = V.home();
     $('#app').innerHTML = html;
     window.scrollTo(0, 0);
     $$('.nav a,.tabs a').forEach(function (a) { a.classList.toggle('on', a.getAttribute('data-v') === view || (view === 'home' && a.getAttribute('data-v') === 'home')); });
     document.body.classList.toggle('on-home', view === 'home' || view === '' || view === 'about');
-    onScroll(); bind(); renderLive(); observe(); rot();
+    onScroll(); bind(); initPilsa(); renderLive(); observe(); rot();
     document.title = (view === 'day' ? 'DAY ' + (parts[1] || myDay()) + ' · ' : '') + '믿음은 ······이다 — 40일';
   }
   function onScroll() {
@@ -285,6 +296,27 @@
     $$('[data-journal]').forEach(function (t) {
       t.oninput = function () { clearTimeout(t._h); t._h = setTimeout(function () { var o = LS.get('journal', {}); o[t.getAttribute('data-journal')] = t.value; LS.set('journal', o); var s = $('#jst'); if (s) s.textContent = '이 기기에 저장했습니다 · ' + new Date().toLocaleTimeString().slice(0, -3); if (!startDate()) startToday(); }, 500); };
     });
+  }
+  function initPilsa() {
+    $$('canvas[data-pilsa]').forEach(function (cv) {
+      var n = cv.getAttribute('data-pilsa'), box = cv.parentNode, dpr = window.devicePixelRatio || 1;
+      var w = box.clientWidth, h = box.clientHeight; cv.width = w * dpr; cv.height = h * dpr; cv.style.width = w + 'px'; cv.style.height = h + 'px';
+      var ctx = cv.getContext('2d'); ctx.scale(dpr, dpr); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#1b1f27'; ctx.lineWidth = 2.6;
+      var saved = LS.get('pilsa', {})[n];
+      if (saved) { var im = new Image(); im.onload = function () { ctx.drawImage(im, 0, 0, w, h); }; im.src = saved; box.classList.add('has'); }
+      var drawing = false, last = null;
+      function pt(e) { var r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+      cv.onpointerdown = function (e) { drawing = true; last = pt(e); cv.setPointerCapture(e.pointerId); box.classList.add('has'); e.preventDefault(); };
+      cv.onpointermove = function (e) { if (!drawing) return; var p = pt(e); var pr = e.pressure && e.pointerType === 'pen' ? 1.4 + e.pressure * 2.4 : 2.6; ctx.lineWidth = pr; ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; e.preventDefault(); };
+      cv.onpointerup = cv.onpointercancel = function () { drawing = false; };
+    });
+    $$('[data-pclear]').forEach(function (b) { b.onclick = function () { var cv = $('canvas[data-pilsa="' + b.getAttribute('data-pclear') + '"]'); cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); cv.parentNode.classList.remove('has'); }; });
+    $$('[data-psave]').forEach(function (b) { b.onclick = function () {
+      var n = b.getAttribute('data-psave'), cv = $('canvas[data-pilsa="' + n + '"]');
+      var off = document.createElement('canvas'); off.width = 900; off.height = Math.round(900 * cv.height / cv.width); var o = off.getContext('2d');
+      o.fillStyle = '#fbf8f2'; o.fillRect(0, 0, off.width, off.height); o.drawImage(cv, 0, 0, off.width, off.height);
+      var ps = LS.get('pilsa', {}); ps[n] = off.toDataURL('image/jpeg', 0.72); LS.set('pilsa', ps); if (!startDate()) startToday(); toast('필사를 이 기기에 저장했습니다');
+    }; });
   }
   function exportTxt() {
     var jr = LS.get('journal', {}), out = ['믿음은 ······이다 — 나의 40일 기록', '시작한 날: ' + (startDate() || '-'), ''];
