@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>관리 · 믿음은 ······이다</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+body{font-family:'Pretendard Variable',Pretendard,sans-serif;background:#f4efe6;color:#1b1f27;margin:0;padding:24px;word-break:keep-all}
+h1{font-size:22px;margin:0 0 16px}.box{max-width:960px;margin:0 auto}
+input,button,select{font:inherit}input[type=password]{padding:10px 12px;border:1px solid #dcd2c1;border-radius:10px;width:180px}
+button{padding:8px 12px;border-radius:99px;border:1px solid #dcd2c1;background:#fff;cursor:pointer;margin:2px}
+button.ink{background:#1b1f27;color:#fff;border-color:#1b1f27}
+.tabs{display:flex;gap:8px;margin:16px 0}.it{background:#fbf8f2;border:1px solid #dcd2c1;border-radius:14px;padding:14px 16px;margin:10px 0}
+.it .t{font-size:16px;line-height:1.7;white-space:pre-wrap}.it .m{font-size:12px;color:#958c7b;margin-top:6px}
+.st{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:#ece5d8;margin-left:6px}
+.st.pending{background:#f3d9a6}.st.private{background:#d6e4f0}.st.hidden{background:#e6c9c9}
+</style></head><body><div class="box">
+<h1>믿음은 ······이다 · 관리</h1>
+<div id="login"><input type="password" id="pin" placeholder="관리 PIN" autocomplete="current-password"> <button class="ink" onclick="load()">열기</button></div>
+<div id="main" style="display:none">
+  <div class="tabs"><button class="ink" onclick="show('pending')">확인 대기</button><button onclick="show('prayer')">기도 제목 전체</button><button onclick="show('confession')">고백 전체</button><button onclick="load()">새로 고침</button></div>
+  <div id="list"></div>
+</div></div>
+<script src="assets/config.js?v=1795288503"></script>
+<script>
+var API=(window.FAITH_CFG||{}).api, DATA=null, VIEW='pending';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function call(b){b.pin=document.getElementById('pin').value;return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(b)}).then(function(r){return r.json()})}
+function load(){call({action:'admin_list'}).then(function(r){if(!r.ok){alert(r.error==='locked'?'잠시 잠겼습니다(10분)':'PIN을 확인해 주세요');return}DATA=r;document.getElementById('login').style.display='none';document.getElementById('main').style.display='block';show(VIEW)})}
+function show(v){VIEW=v;var items=[];
+ if(v==='pending'){items=DATA.confessions.filter(function(x){return x.status==='pending'}).concat(DATA.prayers.filter(function(x){return x.status==='pending'}))}
+ else if(v==='prayer')items=DATA.prayers;else items=DATA.confessions;
+ document.getElementById('list').innerHTML=items.length?items.map(function(x){
+  var acts=x.kind==='prayer'?(x.visibility==='public'?'<button onclick="up(\'prayer\',\''+x.id+'\',\'approved\')">공개 승인</button><button onclick="up(\'prayer\',\''+x.id+'\',\'answered\',true)">응답 표시</button><button onclick="up(\'prayer\',\''+x.id+'\',\'hidden\')">숨김</button>':'')+'<button onclick="up(\'prayer\',\''+x.id+'\',\'delete\')">삭제</button>'
+   :'<button onclick="up(\'confession\',\''+x.id+'\',\'pub\')">공개</button><button onclick="up(\'confession\',\''+x.id+'\',\'hidden\')">숨김</button><button onclick="up(\'confession\',\''+x.id+'\',\'delete\')">삭제</button>';
+  return '<div class="it"><div class="t">'+(x.kind==='confession'?'믿음은 ':'')+esc(x.text)+(x.kind==='confession'?'이다':'')+'</div><div class="m">'+(x.kind==='prayer'?(x.visibility==='public'?'공개 요청':'목회자에게만'):'고백')+'<span class="st '+esc(x.status)+'">'+esc(x.status)+'</span> · '+esc(x.name||'이름 없음')+(x.contact?' · 연락: '+esc(x.contact):'')+' · '+new Date(x.ts).toLocaleString()+(x.kind==='prayer'?' · 기도 '+(x.prayed||0):'')+'</div><div style="margin-top:8px">'+acts+'</div></div>'}).join(''):'<p>항목이 없습니다.</p>'}
+function up(kind,id,status,ask){var b={action:'admin_update',kind:kind,id:id,status:status};if(status==='delete'&&!confirm('삭제할까요?'))return;if(ask){var n=prompt('응답 소식(선택)','');if(n===null)return;b.note=n}call(b).then(function(r){if(r.ok)load();else alert('실패: '+r.error)})}
+</script></body></html>
